@@ -5,24 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Какой ты кошак сегодня?</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #333; }
-        #app { background: white; max-width: 500px; width: 90%; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-        h1 { font-size: 24px; margin-bottom: 20px; color: #ff66aa; }
-        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
-        .options { display: flex; flex-direction: column; gap: 10px; }
-        button { background: #fff; border: 2px solid #ff99cc; padding: 12px; border-radius: 15px; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        button:hover { background: #ff99cc; color: white; transform: translateY(-2px); }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            /* Ставим твой фон */
+            background-image: url('https://i.pinimg.com/736x/13/46/4c/13464c9e05dda8b938b8ec0399e39869.jpg');
+            background-size: cover; /* Растягиваем на весь экран */
+            background-position: center; /* Центрируем */
+            background-attachment: fixed; /* Фон не скроллится */
+            background-repeat: no-repeat;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            color: #333; 
+        }
+        #app { 
+            background: rgba(255, 255, 255, 0.95); /* Белый фон с легкой прозрачностью */
+            max-width: 500px; 
+            width: 90%; 
+            padding: 40px; 
+            border-radius: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            text-align: center; 
+        }
+        h1 { font-size: 28px; margin-bottom: 25px; color: #ff66aa; }
+        .question { font-size: 20px; font-weight: bold; margin-bottom: 25px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        
+        /* Стили для кнопок */
+        button { 
+            background: #fff; 
+            border: 2px solid #ff99cc; 
+            padding: 15px; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            font-size: 18px; 
+            transition: 0.3s; 
+            font-weight: 500;
+        }
+        button:hover { 
+            background: #ff99cc; 
+            color: white; 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(255, 153, 204, 0.4);
+        }
+        
         .hidden { display: none; }
-        img { max-width: 100%; border-radius: 20px; margin-top: 20px; display: block; margin-left: auto; margin-right: auto; }
-        .result-desc { margin-top: 15px; font-style: italic; color: #666; line-height: 1.5; }
-        #progress { font-size: 12px; color: #aaa; margin-top: 20px; }
+        img { max-width: 100%; border-radius: 20px; margin-top: 25px; display: block; margin-left: auto; margin-right: auto; }
+        .result-desc { margin-top: 20px; font-style: italic; color: #555; line-height: 1.6; font-size: 16px; }
+        #progress { font-size: 14px; color: #888; margin-top: 25px; }
+        
+        /* Кнопка старта - делаем её побольше */
+        #start-btn {
+            font-size: 22px;
+            padding: 20px 40px;
+            background: #ff66aa;
+            color: white;
+            border: none;
+            margin-top: 30px;
+        }
+        #start-btn:hover {
+            background: #ff4499;
+        }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <div id="quiz-screen">
-        <h1 id="q-title">Тест: Какой ты кот?</h1>
+    <div id="start-screen">
+        <h1>Узнай, какой ты кошак сегодня!</h1>
+        <p style="font-size: 18px; color: #666;">Тест, который ответит на главные вопросы бытия.</p>
+        <button id="start-btn" onclick="startQuiz()">Сюда ебашь</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <h1 id="q-title" style="font-size: 22px;">Какой ты кот?</h1>
         <div class="question" id="question-text">Загрузка...</div>
         <div class="options" id="options-container"></div>
         <div id="progress">Вопрос 1 из 10</div>
@@ -33,7 +91,7 @@
         <h2 id="result-name"></h2>
         <img id="result-img" src="" alt="Результат">
         <p class="result-desc" id="result-text"></p>
-        <button onclick="location.reload()" style="margin-top: 20px;">Пройти еще раз</button>
+        <button onclick="location.reload()" style="margin-top: 30px; border-color: #aaa; color: #555;">Пройти еще раз</button>
     </div>
 </div>
 
@@ -113,7 +171,7 @@
         tired: {
             name: "Заебавшийся котик",
             img: "https://i.pinimg.com/736x/44/b4/c0/44b4c06ea0e9fbbb49245d1e2933ac08.jpg",
-            desc: "Жизнь тебя потаскала, опытом ты научена). Знаешь, как правильно, но сил доказывать это уже нет. Хочется просто полежать."
+            desc: "Жизнь тебя потаскала, опытом ты научена. Знаешь, как правильно, но сил доказывать это уже нет. Хочется просто полежать."
         },
         legend: {
             name: "Муха це котуха",
@@ -127,6 +185,13 @@
         }
     };
 
+    // Функция для старта теста
+    function startQuiz() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        showQuestion();
+    }
+
     function showQuestion() {
         const q = questions[currentQ];
         document.getElementById('question-text').innerText = q.q;
@@ -136,36 +201,4 @@
         
         q.a.forEach(answer => {
             const btn = document.createElement('button');
-            btn.innerText = answer.t;
-            btn.onclick = () => {
-                scores[answer.v]++;
-                currentQ++;
-                if (currentQ < questions.length) {
-                    showQuestion();
-                } else {
-                    showResult();
-                }
-            };
-            container.appendChild(btn);
-        });
-    }
-
-    function showResult() {
-        document.getElementById('quiz-screen').classList.add('hidden');
-        document.getElementById('result-screen').classList.remove('hidden');
-        
-        let winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-        const cat = cats[winner];
-        
-        document.getElementById('result-name').innerText = cat.name;
-        document.getElementById('result-img').src = cat.img;
-        document.getElementById('result-text').innerText = cat.desc;
-
-        // Отправка уведомления (подготовим для следующего шага)
-        console.log("Тест пройден! Результат:", cat.name);
-    }
-
-    showQuestion();
-</script>
-</body>
-</html>
+            btn.innerText = answer.
