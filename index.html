@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Какой ты котик сегодня?</title>
+    <style>
+        body { font-family: sans-serif; background: #fff5f8; text-align: center; color: #333; }
+        .container { max-width: 500px; margin: 50px auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        img { width: 100%; border-radius: 15px; margin-bottom: 20px; }
+        button { background: #ff99cc; border: none; padding: 10px 20px; color: white; border-radius: 10px; cursor: pointer; font-size: 16px; margin: 5px; transition: 0.3s; }
+        button:hover { background: #ff77aa; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container" id="quiz">
+        <h2 id="question">Как началось твое утро?</h2>
+        <div id="options">
+            <button onclick="nextQuestion()">Проспала всё на свете</button>
+            <button onclick="nextQuestion()">Бодро и с кофе</button>
+        </div>
+    </div>
+
+    <div class="container hidden" id="result">
+        <h2>Ты — Кот-Исследователь! 🐾</h2>
+        <img src="https://placekitten.com/400/300" alt="Милый кот">
+        <p>Ты всегда находишь что-то интересное даже в обычных вещах.</p>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        function nextQuestion() {
+            currentStep++;
+            if (currentStep >= 2) { // Тут количество вопросов
+                document.getElementById('quiz').classList.add('hidden');
+                document.getElementById('result').classList.remove('hidden');
+                notifyMe(); // Уведомление о прохождении
+            } else {
+                document.getElementById('question').innerText = "Что выберешь на обед?";
+                document.getElementById('options').innerHTML = '<button onclick="nextQuestion()">Вкусную рыбку</button><button onclick="nextQuestion()">Что-то экзотическое</button>';
+            }
+        }
+
+        function notifyMe() {
+            // Сюда мы вставим код для уведомления в Telegram чуть позже
+            console.log("Кто-то прошел тест!");
+        }
+    </script>
+</body>
+</html>
