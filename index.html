@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Какой ты кошак сегодня?</title>
+    <title>Какой ты котик сегодня?</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            /* Ставим твой фон */
             background-image: url('https://i.pinimg.com/736x/13/46/4c/13464c9e05dda8b938b8ec0399e39869.jpg');
-            background-size: cover; /* Растягиваем на весь экран */
-            background-position: center; /* Центрируем */
-            background-attachment: fixed; /* Фон не скроллится */
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
             background-repeat: no-repeat;
             display: flex; 
             justify-content: center; 
@@ -21,19 +20,19 @@
             color: #333; 
         }
         #app { 
-            background: rgba(255, 255, 255, 0.95); /* Белый фон с легкой прозрачностью */
+            background: rgba(255, 255, 255, 0.95); 
             max-width: 500px; 
             width: 90%; 
             padding: 40px; 
             border-radius: 25px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
             text-align: center; 
+            position: relative;
         }
         h1 { font-size: 28px; margin-bottom: 25px; color: #ff66aa; }
         .question { font-size: 20px; font-weight: bold; margin-bottom: 25px; }
         .options { display: flex; flex-direction: column; gap: 12px; }
         
-        /* Стили для кнопок */
         button { 
             background: #fff; 
             border: 2px solid #ff99cc; 
@@ -56,7 +55,6 @@
         .result-desc { margin-top: 20px; font-style: italic; color: #555; line-height: 1.6; font-size: 16px; }
         #progress { font-size: 14px; color: #888; margin-top: 25px; }
         
-        /* Кнопка старта - делаем её побольше */
         #start-btn {
             font-size: 22px;
             padding: 20px 40px;
@@ -64,9 +62,17 @@
             color: white;
             border: none;
             margin-top: 30px;
+            margin-bottom: 20px;
         }
-        #start-btn:hover {
-            background: #ff4499;
+        #start-btn:hover { background: #ff4499; }
+
+        /* Тот самый мелкий текст */
+        .personal-order {
+            font-size: 11px;
+            color: #bbb;
+            margin-top: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -77,6 +83,7 @@
         <h1>Узнай, какой ты кошак сегодня!</h1>
         <p style="font-size: 18px; color: #666;">Тест, который ответит на главные вопросы бытия.</p>
         <button id="start-btn" onclick="startQuiz()">Сюда ебашь</button>
+        <div class="personal-order">по личному заказу</div>
     </div>
 
     <div id="quiz-screen" class="hidden">
@@ -185,7 +192,6 @@
         }
     };
 
-    // Функция для старта теста
     function startQuiz() {
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
@@ -201,4 +207,33 @@
         
         q.a.forEach(answer => {
             const btn = document.createElement('button');
-            btn.innerText = answer.
+            btn.innerText = answer.t;
+            btn.onclick = () => {
+                scores[answer.v]++;
+                currentQ++;
+                if (currentQ < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    function showResult() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        
+        let winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+        const cat = cats[winner];
+        
+        document.getElementById('result-name').innerText = cat.name;
+        document.getElementById('result-img').src = cat.img;
+        document.getElementById('result-text').innerText = cat.desc;
+
+        console.log("Тест пройден! Результат:", cat.name);
+    }
+</script>
+</body>
+</html>
