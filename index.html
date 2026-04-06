@@ -2,49 +2,170 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Какой ты котик сегодня?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Какой ты кошак сегодня?</title>
     <style>
-        body { font-family: sans-serif; background: #fff5f8; text-align: center; color: #333; }
-        .container { max-width: 500px; margin: 50px auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        img { width: 100%; border-radius: 15px; margin-bottom: 20px; }
-        button { background: #ff99cc; border: none; padding: 10px 20px; color: white; border-radius: 10px; cursor: pointer; font-size: 16px; margin: 5px; transition: 0.3s; }
-        button:hover { background: #ff77aa; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #333; }
+        #app { background: white; max-width: 500px; width: 90%; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        h1 { font-size: 24px; margin-bottom: 20px; color: #ff66aa; }
+        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        button { background: #fff; border: 2px solid #ff99cc; padding: 12px; border-radius: 15px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #ff99cc; color: white; transform: translateY(-2px); }
         .hidden { display: none; }
+        img { max-width: 100%; border-radius: 20px; margin-top: 20px; display: block; margin-left: auto; margin-right: auto; }
+        .result-desc { margin-top: 15px; font-style: italic; color: #666; line-height: 1.5; }
+        #progress { font-size: 12px; color: #aaa; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="container" id="quiz">
-        <h2 id="question">Как началось твое утро?</h2>
-        <div id="options">
-            <button onclick="nextQuestion()">Проспала всё на свете</button>
-            <button onclick="nextQuestion()">Бодро и с кофе</button>
-        </div>
+
+<div id="app">
+    <div id="quiz-screen">
+        <h1 id="q-title">Тест: Какой ты кот?</h1>
+        <div class="question" id="question-text">Загрузка...</div>
+        <div class="options" id="options-container"></div>
+        <div id="progress">Вопрос 1 из 10</div>
     </div>
 
-    <div class="container hidden" id="result">
-        <h2>Ты — Кот-Исследователь! 🐾</h2>
-        <img src="https://placekitten.com/400/300" alt="Милый кот">
-        <p>Ты всегда находишь что-то интересное даже в обычных вещах.</p>
+    <div id="result-screen" class="hidden">
+        <h1>Твой результат:</h1>
+        <h2 id="result-name"></h2>
+        <img id="result-img" src="" alt="Результат">
+        <p class="result-desc" id="result-text"></p>
+        <button onclick="location.reload()" style="margin-top: 20px;">Пройти еще раз</button>
     </div>
+</div>
 
-    <script>
-        let currentStep = 0;
-        function nextQuestion() {
-            currentStep++;
-            if (currentStep >= 2) { // Тут количество вопросов
-                document.getElementById('quiz').classList.add('hidden');
-                document.getElementById('result').classList.remove('hidden');
-                notifyMe(); // Уведомление о прохождении
-            } else {
-                document.getElementById('question').innerText = "Что выберешь на обед?";
-                document.getElementById('options').innerHTML = '<button onclick="nextQuestion()">Вкусную рыбку</button><button onclick="nextQuestion()">Что-то экзотическое</button>';
-            }
-        }
+<script>
+    const questions = [
+        { q: "Будильник проорал 5 минут назад. Твои действия?", a: [
+            { t: "Да пошло оно всё, еще 15 минут сна", v: "tired" },
+            { t: "Встаю с грацией картошки", v: "poh" },
+            { t: "Я уже в телефоне, проверяю мемы", v: "snake" },
+            { t: "Встаю покорять этот мир (нет)", v: "legend" }
+        ]},
+        { q: "Как настрой на этот день в целом?", a: [
+            { t: "Максимальный похуизм", v: "poh" },
+            { t: "Хочется уебаться в работу/учебу, чтоб не думать", v: "tired" },
+            { t: "Чувствую себя иконой стиля", v: "legend" },
+            { t: "Не трогайте меня, я в домике", v: "snake" }
+        ]},
+        { q: "Что выберешь на перекус?", a: [
+            { t: "Кофе и сигарету (или просто кофе)", v: "tired" },
+            { t: "Чипсы/энергетик у монитора", v: "snake" },
+            { t: "Что-то реально вкусное и дорогое", v: "legend" },
+            { t: "Что в холодильнике завалялось", v: "poh" }
+        ]},
+        { q: "В чате начинается какой-то лютый замес. Ты:", a: [
+            { t: "Молча читаю и кекаю", v: "poh" },
+            { t: "Влетаю с двух ног, я тут главный", v: "legend" },
+            { t: "Закрываю чат, ну его нахер", v: "tired" },
+            { t: "Кидаю один мем и ухожу в туман", v: "snake" }
+        ]},
+        { q: "Идеальный вечер — это...", a: [
+            { t: "Катка в любимую игру до утра", v: "snake" },
+            { t: "Просто лежать и смотреть в потолок", v: "poh" },
+            { t: "Ванна, вино, чилл", v: "legend" },
+            { t: "Сон. Просто дайте поспать", v: "tired" }
+        ]},
+        { q: "Если техника начинает тупить, ты:", a: [
+            { t: "Перезагружаю, пока не заработает", v: "snake" },
+            { t: "Вздыхаю, жизнь — боль", v: "tired" },
+            { t: "Ну и ладно, пойду поем", v: "poh" },
+            { t: "Техника просто не тянет мой уровень", v: "legend" }
+        ]},
+        { q: "Твоё отношение к планам на выходные?", a: [
+            { t: "Какие планы, я импровизирую", v: "poh" },
+            { t: "Главное — чтоб никто не трогал", v: "snake" },
+            { t: "Всё должно быть красиво и по кайфу", v: "legend" },
+            { t: "Надо переделать кучу дел (грустный вздох)", v: "tired" }
+        ]},
+        { q: "Как ты реагируешь на комплименты?", a: [
+            { t: "Я знаю, я легенда", v: "legend" },
+            { t: "Ой, да ладно тебе...", v: "poh" },
+            { t: "Смущенно уползаю в тень", v: "snake" },
+            { t: "Спасибо, мне это было нужно", v: "tired" }
+        ]},
+        { q: "Внезапный звонок с незнакомого номера:", a: [
+            { t: "Сбрасываю нахер", v: "snake" },
+            { t: "Смотрю, пока не перестанет звонить", v: "poh" },
+            { t: "Беру трубку, вдруг там что-то важное", v: "tired" },
+            { t: "Пусть записываются на прием заранее", v: "legend" }
+        ]},
+        { q: "Последний вопрос: чего хочется прямо сейчас?", a: [
+            { t: "Пиццу и забить на всё", v: "poh" },
+            { t: "Миллион долларов и отпуск", v: "tired" },
+            { t: "Новую шмотку или похвалу", v: "legend" },
+            { t: "Чтобы пинг был 1ms и тишина", v: "snake" }
+        ]}
+    ];
 
-        function notifyMe() {
-            // Сюда мы вставим код для уведомления в Telegram чуть позже
-            console.log("Кто-то прошел тест!");
+    let currentQ = 0;
+    let scores = { poh: 0, tired: 0, legend: 0, snake: 0 };
+
+    const cats = {
+        poh: {
+            name: "Котик-похуист",
+            img: "https://i.pinimg.com/736x/2f/be/40/2fbe40f85564175f0209649528959cd0.jpg",
+            desc: "Тебя ебут, а тебе нравится. Ну, в плане — жизненные трудности текут мимо, а ты просто кайфуешь. Хайповый тип, ноль стресса."
+        },
+        tired: {
+            name: "Заебавшийся котик",
+            img: "https://i.pinimg.com/736x/44/b4/c0/44b4c06ea0e9fbbb49245d1e2933ac08.jpg",
+            desc: "Жизнь тебя потаскала, опытом ты научен(а). Знаешь, как правильно, но сил доказывать это уже нет. Хочется просто полежать."
+        },
+        legend: {
+            name: "Муха це котуха",
+            img: "https://i.pinimg.com/736x/4f/1e/df/4f1edf03d952c4075c4752e0ef4badf4.jpg",
+            desc: "Ну легенда просто! Цену себе знаешь, выглядишь на все сто, даже если просто сидишь в углу. Весь мир — твоя сцена."
+        },
+        snake: {
+            name: "Кот-змея (змеюка)",
+            img: "https://i.pinimg.com/736x/34/e9/70/34e970ca85a39e7cf1b8bd48295223bb.jpg",
+            desc: "Мега кайфовый тип. Затворник, игроман, ценитель ночного образа жизни. Внатуре змеюка — тихий, но если надо, выдашь базу."
         }
-    </script>
+    };
+
+    function showQuestion() {
+        const q = questions[currentQ];
+        document.getElementById('question-text').innerText = q.q;
+        document.getElementById('progress').innerText = `Вопрос ${currentQ + 1} из ${questions.length}`;
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        q.a.forEach(answer => {
+            const btn = document.createElement('button');
+            btn.innerText = answer.t;
+            btn.onclick = () => {
+                scores[answer.v]++;
+                currentQ++;
+                if (currentQ < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    function showResult() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        
+        let winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+        const cat = cats[winner];
+        
+        document.getElementById('result-name').innerText = cat.name;
+        document.getElementById('result-img').src = cat.img;
+        document.getElementById('result-text').innerText = cat.desc;
+
+        // Отправка уведомления (подготовим для следующего шага)
+        console.log("Тест пройден! Результат:", cat.name);
+    }
+
+    showQuestion();
+</script>
 </body>
 </html>
