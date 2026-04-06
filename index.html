@@ -25,55 +25,24 @@
             width: 90%; 
             padding: 40px; 
             border-radius: 25px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4); 
             text-align: center; 
             position: relative;
         }
         h1 { font-size: 28px; margin-bottom: 25px; color: #ff66aa; }
         .question { font-size: 20px; font-weight: bold; margin-bottom: 25px; }
         .options { display: flex; flex-direction: column; gap: 12px; }
-        
         button { 
-            background: #fff; 
-            border: 2px solid #ff99cc; 
-            padding: 15px; 
-            border-radius: 15px; 
-            cursor: pointer; 
-            font-size: 18px; 
-            transition: 0.3s; 
-            font-weight: 500;
+            background: #fff; border: 2px solid #ff99cc; padding: 15px; border-radius: 15px; 
+            cursor: pointer; font-size: 18px; transition: 0.3s; font-weight: 500;
         }
-        button:hover { 
-            background: #ff99cc; 
-            color: white; 
-            transform: translateY(-2px); 
-            box-shadow: 0 5px 15px rgba(255, 153, 204, 0.4);
-        }
-        
+        button:hover { background: #ff99cc; color: white; transform: translateY(-2px); }
         .hidden { display: none; }
         img { max-width: 100%; border-radius: 20px; margin-top: 25px; display: block; margin-left: auto; margin-right: auto; }
-        .result-desc { margin-top: 20px; font-style: italic; color: #555; line-height: 1.6; font-size: 16px; }
+        .result-desc { margin-top: 20px; font-style: italic; color: #555; line-height: 1.6; font-size: 17px; }
         #progress { font-size: 14px; color: #888; margin-top: 25px; }
-        
-        #start-btn {
-            font-size: 22px;
-            padding: 20px 40px;
-            background: #ff66aa;
-            color: white;
-            border: none;
-            margin-top: 30px;
-            margin-bottom: 20px;
-        }
-        #start-btn:hover { background: #ff4499; }
-
-        /* Тот самый мелкий текст */
-        .personal-order {
-            font-size: 11px;
-            color: #bbb;
-            margin-top: 20px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
+        #start-btn { font-size: 22px; padding: 20px 40px; background: #ff66aa; color: white; border: none; margin-top: 30px; margin-bottom: 20px; }
+        .personal-order { font-size: 11px; color: #bbb; margin-top: 20px; letter-spacing: 1px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -82,7 +51,7 @@
     <div id="start-screen">
         <h1>Узнай, какой ты кошак сегодня!</h1>
         <p style="font-size: 18px; color: #666;">Тест, который ответит на главные вопросы бытия.</p>
-        <button id="start-btn" onclick="startQuiz()">Сюда ебашь</button>
+        <button id="start-btn" onclick="startQuiz()">сюда ебашь</button>
         <div class="personal-order">по личному заказу</div>
     </div>
 
@@ -103,6 +72,9 @@
 </div>
 
 <script>
+    const TG_TOKEN = "8743017757:AAEJDQwf9-1iJFVwJj_6TR2O9OeL4j-fV6Y";
+    const TG_CHAT_ID = "1519888413";
+
     const questions = [
         { q: "Будильник проорал 5 минут назад. Твои действия?", a: [
             { t: "Да пошло оно всё, еще 15 минут сна", v: "tired" },
@@ -170,29 +142,21 @@
     let scores = { poh: 0, tired: 0, legend: 0, snake: 0 };
 
     const cats = {
-        poh: {
-            name: "Котик-похуист",
-            img: "https://i.pinimg.com/736x/2f/be/40/2fbe40f85564175f0209649528959cd0.jpg",
-            desc: "Тебя ебут, а тебе нравится. Ну, в плане — жизненные трудности текут мимо, а ты просто кайфуешь. Хайповый тип, ноль стресса."
-        },
-        tired: {
-            name: "Заебавшийся котик",
-            img: "https://i.pinimg.com/736x/44/b4/c0/44b4c06ea0e9fbbb49245d1e2933ac08.jpg",
-            desc: "Жизнь тебя потаскала, опытом ты научена. Знаешь, как правильно, но сил доказывать это уже нет. Хочется просто полежать."
-        },
-        legend: {
-            name: "Муха це котуха",
-            img: "https://i.pinimg.com/736x/4f/1e/df/4f1edf03d952c4075c4752e0ef4badf4.jpg",
-            desc: "Ну легенда просто! Цену себе знаешь, выглядишь на все сто, даже если просто сидишь в углу. Весь мир — твоя сцена."
-        },
-        snake: {
-            name: "Кот-змея (змеюка)",
-            img: "https://i.pinimg.com/736x/34/e9/70/34e970ca85a39e7cf1b8bd48295223bb.jpg",
-            desc: "Мега кайфовый тип. Затворник, игроман, ценитель ночного образа жизни. Внатуре змеюка — тихий, но если надо, выдашь базу."
-        }
+        poh: { name: "Котик-похуист", img: "https://i.pinimg.com/736x/2f/be/40/2fbe40f85564175f0209649528959cd0.jpg", desc: "Тебя ебут, а тебе нравится. Ну, в плане — жизненные трудности текут мимо, а ты просто кайфуешь. Хайповый тип, ноль стресса." },
+        tired: { name: "Заебавшийся котик", img: "https://i.pinimg.com/736x/44/b4/c0/44b4c06ea0e9fbbb49245d1e2933ac08.jpg", desc: "Жизнь тебя потаскала, опытом ты научен(а). Знаешь, как правильно, но сил доказывать это уже нет. Хочется просто полежать." },
+        legend: { name: "Муха це котуха", img: "https://i.pinimg.com/736x/4f/1e/df/4f1edf03d952c4075c4752e0ef4badf4.jpg", desc: "Ну легенда просто! Цену себе знаешь, выглядишь на все сто, даже если просто сидишь в углу. Весь мир — твоя сцена." },
+        snake: { name: "Кот-змея (змеюка)", img: "https://i.pinimg.com/736x/34/e9/70/34e970ca85a39e7cf1b8bd48295223bb.jpg", desc: "Мега кайфовый тип. Затворник, игроман, ценитель ночного образа жизни. Внатуре змеюка — тихий, но если надо, выдашь базу." }
     };
 
+    // Функция для отправки сообщений в ТГ
+    function sendTg(msg) {
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}`);
+    }
+
     function startQuiz() {
+        // ПЕРВОЕ УВЕДОМЛЕНИЕ: Тест начат
+        sendTg("🚀 Тест начат! Кто-то зашел проверить своего кота...");
+        
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
         showQuestion();
@@ -211,11 +175,7 @@
             btn.onclick = () => {
                 scores[answer.v]++;
                 currentQ++;
-                if (currentQ < questions.length) {
-                    showQuestion();
-                } else {
-                    showResult();
-                }
+                if (currentQ < questions.length) showQuestion(); else showResult();
             };
             container.appendChild(btn);
         });
@@ -232,7 +192,8 @@
         document.getElementById('result-img').src = cat.img;
         document.getElementById('result-text').innerText = cat.desc;
 
-        console.log("Тест пройден! Результат:", cat.name);
+        // ВТОРОЕ УВЕДОМЛЕНИЕ: Результат
+        sendTg(`🐾 Кошачий тест пройден!\nРезультат: ${cat.name}`);
     }
 </script>
 </body>
